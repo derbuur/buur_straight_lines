@@ -6,6 +6,7 @@ Written by buur (derbuur@googlemail.com)
 */
 
 if (!hasInterface) exitWith {};
+missionNamespace setVariable ["buur_straight_lines_MarkerID",100000];
 
 findDisplay 12 displayaddEventHandler ["MouseButtonDown",
 		{if (_this select 4) then
@@ -50,12 +51,20 @@ findDisplay 12 displayaddEventHandler
         _myCenterCoordinates = [(((_myStartCoordinates select 0) + (_myActualCoordinates select 0)) / 2),(((_myStartCoordinates select 1) + (_myActualCoordinates select 1)) / 2),0];
         _myDirection = _myStartCoordinates getDir _myActualCoordinates;
         _mylenght = (_myStartCoordinates distance _myActualCoordinates)/2;
-myDirection = _myDirection;
-myCenterCoordinates=_myCenterCoordinates;
-
-          ["RECTANGLE", _myCenterCoordinates,[2, _mylenght],_myDirection] call BIS_fnc_markerCreate;
 
 
+        _lastMarkerID = missionNamespace getVariable "buur_straight_lines_MarkerID";
+        _newMarkerID = _lastMarkerID + 1;
+        missionNamespace setVariable ["buur_straight_lines_MarkerID",_newMarkerID];
+
+        _myMarkerName = "_USER_DEFINED #" + str clientOwner + "/" + str _newMarkerID + "/" + str currentChannel;
+
+
+        _myMarkerName = createMarker [_myMarkerName,_myCenterCoordinates];
+        _myMarkerName setMarkerShape "RECTANGLE";
+        _myMarkerName setMarkerDir _myDirection;
+        _myMarkerName setMarkerSize [2, _mylenght];
+        _myMarkerName setMarkerColor "ColorBlack";
 
 
 				((findDisplay 12) displayCtrl 51) ctrlRemoveEventHandler ["Draw",_id_Draw];
@@ -65,16 +74,3 @@ myCenterCoordinates=_myCenterCoordinates;
 			};
 		}
 	];
-
-  _markerName = "";
-  _markerPos = [0,0,0];
-  _markerSize = [0,0];
-  _markerColor = "";
-  _markerType = "";
-  _markerBrush = "";
-  _markerShape = "";
-  _markerDir = 1;
-  _markerText = "";
-  _markerGlobal = false;
-  _markerCounterVar = _fnc_scriptName + "_counter";
-  _markerCounter = if (isnil _markerCounterVar) then {-1} else {missionnamespace getvariable _markerCounterVar};
