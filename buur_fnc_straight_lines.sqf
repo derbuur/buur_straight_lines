@@ -63,8 +63,10 @@ findDisplay 12 displayaddEventHandler
         _myMarkerName = createMarker [_myMarkerName,_myCenterCoordinates];
         _myMarkerName setMarkerShape "RECTANGLE";
         _myMarkerName setMarkerDir _myDirection;
-        _myMarkerName setMarkerSize [2, _mylenght];
+        _myMarkerName setMarkerSize [10, _mylenght];
         _myMarkerName setMarkerColor "ColorBlack";
+				_myMarkerName setMarkerBrush "SolidFull";
+
 
 
 				((findDisplay 12) displayCtrl 51) ctrlRemoveEventHandler ["Draw",_id_Draw];
@@ -74,3 +76,25 @@ findDisplay 12 displayaddEventHandler
 			};
 		}
 	];
+
+
+	0 = 0 spawn {
+	    waitUntil {!isNull findDisplay 12};
+	    findDisplay 12 displayCtrl 51 ctrlAddEventHandler ["Draw", {
+	        if (visibleMap) then {
+	            _scale = ctrlMapScale (_this select 0);
+	            {
+	                _m = "#markerSize_" + _x;
+	                if (parseNumber ((_x splitString "/") select 1) >= 100000) then {
+	                    if (isNil {player getVariable _m}) then {
+	                        player setVariable [_m, markerSize _x];
+	                    };
+	                    _x setMarkerSizeLocal [
+	                        ((player getVariable _m) select 0) * _scale,
+	                        ((player getVariable _m) select 1)
+	                    ];
+	                };
+	            } forEach allMapMarkers;
+	        };
+	    }];
+	};
