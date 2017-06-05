@@ -1,15 +1,26 @@
 /*
-This short script draws a straight line on the map while pressing the lef shift key.
+This short script draws a straight line on the map while pressing the lef alt key.
 No needs for input Variables.
 Written by buur (derbuur@googlemail.com)
+
+Also thanks to pierremgi for finding selected color and Killzonekid for scaling the line.
 
 */
 
 if (!hasInterface) exitWith {};
 missionNamespace setVariable ["buur_straight_lines_MarkerID",100000];
 
+0 = [] spawn {
+  waitUntil {!isnull (findDisplay 12)};
+  colors = ["colorBlack","colorRed","colorYellow","colorGreen","colorBlue","colorWhite","colorBLUFOR","colorOPFOR","colorIndependent","colorCivilian","colorUNKNOWN"];
+    _handle = (findDisplay 12 displayCtrl 1090) ctrlSetEventHandler ["LBSelChanged",
+			"player setVariable ['buur_straight_lines_myColor',colors select (lbCurSel (_this select 0))];
+      false"
+   ]
+};
+
 findDisplay 12 displayaddEventHandler ["MouseButtonDown",
-		{if (_this select 4) then
+		{if (_this select 6) then
 			{
 					player setVariable ["buur_straight_lines_myStartCoordinates",((findDisplay 12) displayCtrl 51) ctrlMapScreenToWorld [(_this select 2), (_this select 3)]];
 					player setVariable ["buur_straight_lines_myActualCoordinates",(player getVariable "buur_straight_lines_myStartCoordinates")];
@@ -58,13 +69,13 @@ findDisplay 12 displayaddEventHandler
         missionNamespace setVariable ["buur_straight_lines_MarkerID",_newMarkerID];
 
         _myMarkerName = "_USER_DEFINED #" + str clientOwner + "/" + str _newMarkerID + "/" + str currentChannel;
-
+				_myColor = player getVariable ["buur_straight_lines_myColor","colorBlack"];
 
         _myMarkerName = createMarker [_myMarkerName,_myCenterCoordinates];
         _myMarkerName setMarkerShape "RECTANGLE";
         _myMarkerName setMarkerDir _myDirection;
         _myMarkerName setMarkerSize [10, _mylenght];
-        _myMarkerName setMarkerColor "ColorBlack";
+        _myMarkerName setMarkerColor _myColor;
 				_myMarkerName setMarkerBrush "SolidFull";
 
 
