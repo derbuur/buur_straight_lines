@@ -31,7 +31,9 @@ findDisplay 12 displayaddEventHandler ["MouseButtonDown",
 							{player setVariable ["buur_straight_lines_myActualCoordinates", ((findDisplay 12) displayCtrl 51) ctrlMapScreenToWorld [(_this select 1),(_this select 2)]];
 							_meters = round ((player getVariable "buur_straight_lines_myActualCoordinates") distance2D (player getVariable "buur_straight_lines_myStartCoordinates"));
 							_azimuth = round ((player getVariable "buur_straight_lines_myStartCoordinates") getDir (player getVariable "buur_straight_lines_myActualCoordinates"));
-							}
+              _displaytext = format ["Distance: %1, Direction: %2",_meters,_azimuth];
+              [_displaytext,false,1] call ace_common_fnc_displayText;
+              }
 						];
 
 					_id_Draw = findDisplay 12 displayCtrl 51 ctrlAddEventHandler ["Draw",
@@ -51,11 +53,10 @@ findDisplay 12 displayaddEventHandler ["MouseButtonDown",
 
 findDisplay 12 displayaddEventHandler
 	["MouseButtonUp",
-		{if (isnil str (player getVariable "buur_straight_lines_myStartCoordinates")) then
+		{if ((_this select 6) && (isnil str (player getVariable "buur_straight_lines_myStartCoordinates"))) then
 			{
 				_id_MouseMoving = player getVariable "buur_straight_lines_id_MouseMoving";
 				_id_Draw = player getVariable "buur_straight_lines_id_Draw";
-
         _myStartCoordinates = player getVariable "buur_straight_lines_myStartCoordinates";
         _myActualCoordinates = player getVariable "buur_straight_lines_myActualCoordinates";
 
@@ -84,7 +85,17 @@ findDisplay 12 displayaddEventHandler
 				((findDisplay 12) displayCtrl 51) ctrlRemoveEventHandler ["MouseMoving",_id_MouseMoving];
 				player setVariable ["buur_straight_lines_myStartCoordinates",nil];
 				player setVariable ["buur_straight_lines_myActualCoordinates",nil];
-			};
+			}
+      else
+      {
+        _id_MouseMoving = player getVariable "buur_straight_lines_id_MouseMoving";
+				_id_Draw = player getVariable "buur_straight_lines_id_Draw";
+
+        ((findDisplay 12) displayCtrl 51) ctrlRemoveEventHandler ["Draw",_id_Draw];
+        ((findDisplay 12) displayCtrl 51) ctrlRemoveEventHandler ["MouseMoving",_id_MouseMoving];
+        player setVariable ["buur_straight_lines_myStartCoordinates",nil];
+        player setVariable ["buur_straight_lines_myActualCoordinates",nil];
+      };
 		}
 	];
 
