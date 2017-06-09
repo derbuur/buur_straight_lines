@@ -32,7 +32,19 @@ findDisplay 12 displayaddEventHandler ["MouseButtonDown",
 							_meters = round ((player getVariable "buur_straight_lines_myActualCoordinates") distance2D (player getVariable "buur_straight_lines_myStartCoordinates"));
 							_azimuth = round ((player getVariable "buur_straight_lines_myStartCoordinates") getDir (player getVariable "buur_straight_lines_myActualCoordinates"));
               _displaytext = format ["Distance: %1, Direction: %2",_meters,_azimuth];
-              [_displaytext,false,1] call ace_common_fnc_displayText;
+
+              if (("ace_common" in configSourceAddonList (configFile )) && ("ace_interaction" in configSourceAddonList (configFile ))  ) then
+        				{
+        					if (("ACE_MapTools" in items player)) then
+        						{
+        							[_displaytext,false,1] call ace_common_fnc_displayText;
+        						};
+        				}
+        			else
+        			  {
+        					hint _displaytext;
+        				};
+
               }
 						];
 
